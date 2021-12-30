@@ -1,20 +1,33 @@
 import "./App.css";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import * as socketIo from "socket.io-client";
+const socket = socketIo.connect("http://localhost:4000/chat", { path: "/socket.io" });
 
 function App() {
         interface ChatLogProps {
                 user: number;
                 message: string;
         }
-        const chatLog: Array<ChatLogProps> = [
+        const [chatLog, setChatLog] = useState<Array<ChatLogProps>>([
                 { user: 0, message: "Hello" },
-                { user: 1, message: "Hi! My name is Kainé, K A I N É, I'm 20, FPT University student... and well, I'm dying" },
-        ];
+                { user: 1, message: "Hi! My name is Kainé, K A I N É, I'm 20, FPT University student... and well, I'm " },
+        ]);
 
         const { register, handleSubmit } = useForm({ shouldUseNativeValidation: true });
+
+        useEffect(() => {
+                socket.on("message", (data: ChatLogProps) => {
+                        // console.log(data);
+                        setChatLog([...chatLog, data]);
+                });
+        });
+
         const onSubmit = async (data: ChatLogProps) => {
-                console.log(data);
+                socket.emit("message", data);
         };
+
+        useEffect(() => {}, []);
 
         return (
                 <div className="App">
@@ -22,19 +35,17 @@ function App() {
                                 <div className="bg-white h-full rounded items-start w-96 relative">
                                         <div className="p-4">
                                                 <ul className="flex flex-col">
-                                                        {chatLog.map((item, index) => (
+                                                        {chatLog.map(({ message, user }, index) => (
                                                                 <li
                                                                         key={index}
-                                                                        className={`flex ${
-                                                                                item.user !== 0 ? "justify-end ml-16" : "justify-start mr-16"
-                                                                        }`}
+                                                                        className={`flex ${user !== 0 ? "justify-end ml-16" : "justify-start mr-16"}`}
                                                                 >
                                                                         <p
                                                                                 className={`${
-                                                                                        item.user !== 0 ? "bg-blue-500" : "bg-gray-300"
+                                                                                        user !== 0 ? "bg-blue-500" : "bg-gray-300"
                                                                                 } rounded-3xl py-2 px-4 font-normal w-fit mb-1 text-left`}
                                                                         >
-                                                                                {item.message}
+                                                                                {message}
                                                                         </p>
                                                                 </li>
                                                         ))}
