@@ -31,13 +31,10 @@ const Chat: React.FunctionComponent<ChatProps> = ({ userIndex }) => {
                         <div className="p-4">
                                 <ul className="flex flex-col">
                                         {chatLog.map(({ message, user }, index) => (
-                                                <li
-                                                        key={index}
-                                                        className={`flex ${user !== userIndex ? "justify-end ml-16" : "justify-start mr-16"}`}
-                                                >
+                                                <li key={index} className={`flex ${userIndex == user ? "justify-end ml-16" : "justify-start mr-16"}`}>
                                                         <p
                                                                 className={`${
-                                                                        user !== userIndex ? "bg-blue-500" : "bg-gray-300"
+                                                                        userIndex == user ? "bg-blue-500" : "bg-gray-300"
                                                                 } rounded-3xl py-2 px-4 font-normal w-fit mb-1 text-left`}
                                                         >
                                                                 {message}

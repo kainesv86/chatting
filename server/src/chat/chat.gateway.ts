@@ -23,7 +23,6 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   handleMessage(@MessageBody() chatLog: ChatLogDto): void {
-    console.log(chatLog);
     this.server.emit('message', chatLog);
   }
 }
